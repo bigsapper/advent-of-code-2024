@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2024;
@@ -27,9 +28,10 @@ public class Day03
 
         internal static MatchCollection ParseMultiplicationOps(string mem)
         {
-            string pattern = @"mul\((\d{1,3}),(\d{1,3})\)";
+            string patternMulOps = @"mul\((\d{1,3}),(\d{1,3})\)";
+            string patternDoDontOps = @"do\(\)|don't\(\)";
 
-            MatchCollection matches = Regex.Matches(mem, pattern);
+            MatchCollection matches = Regex.Matches(mem, patternMulOps + "|" + patternDoDontOps);
 
             Console.WriteLine("Found matches:");
             foreach (Match match in matches)
@@ -39,17 +41,22 @@ public class Day03
             return matches;
         }
 
-        internal static int GetMultiplicationTotal(MatchCollection matches)
+        internal static long GetMultiplicationTotal(MatchCollection matches)
         {
-            int total = 0;
+            long total = 0;
+
             foreach (Match match in matches)
             {
+                // This is a "do()" or "don't()" operation, skip it
+                if (match.Value[0] == 'd') continue;
+
                 // Extract the two numbers from the match
                 int num1 = int.Parse(match.Groups[1].Value);
                 int num2 = int.Parse(match.Groups[2].Value);
 
                 // Perform the multiplication
-                int result = num1 * num2;
+                long result = (long)num1 * num2;
+
                 total += result;
             }
 
