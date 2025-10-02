@@ -1,6 +1,6 @@
-namespace AdventOfCode2024;
-
 using System;
+
+namespace AdventOfCode2024;
 
 public class Day01
 {
@@ -41,7 +41,7 @@ public class Day01
             //Console.WriteLine(string.Join(", ", numbers));
             return numbers;
         }
-        
+
         internal static int CalculateDistance(List<int> start, List<int> end)
         {
             int distance = 0;
