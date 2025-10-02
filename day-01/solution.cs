@@ -7,8 +7,8 @@ public class Day01
     internal static string Solution(string[] args)
     {
         // C:\Users\chris\Documents\GitHub\advent-of-code-2024\bin\Debug\net9.0\day-01\input.txt
-        var startList = Common.GetSortedIntegerListFromFile("../../../day-01/input.txt", 0);
-        var endList = Common.GetSortedIntegerListFromFile("../../../day-01/input.txt", 1);
+        var startList = Helpers.GetSortedIntegerListFromFile("../../../day-01/input.txt", 0);
+        var endList = Helpers.GetSortedIntegerListFromFile("../../../day-01/input.txt", 1);
 
         //var distance = Helpers.CalculateDistance(startList, endList);
         //return string.Format("Solution for Day 01: Total Distance = {0}", distance);
@@ -17,8 +17,31 @@ public class Day01
         return string.Format("Solution for Day 01: Total Similarity = {0}", similarity);
     }
 
-    internal class Helpers
+    private class Helpers
     {
+        internal static List<int> GetSortedIntegerListFromFile(string filePath, int position)
+        {
+            var lines = Array.Empty<string>();
+            using (var reader = new StreamReader(filePath))
+            {
+                lines = reader.ReadToEnd().Split(Environment.NewLine);
+            }
+
+            var numbers = new List<int>();
+            foreach (var line in lines)
+            {
+                var parts = line.Split("   ");
+                if (parts.Length > position && int.TryParse(parts[position], out int number))
+                {
+                    numbers.Add(number);
+                }
+            }
+
+            numbers.Sort();
+            //Console.WriteLine(string.Join(", ", numbers));
+            return numbers;
+        }
+        
         internal static int CalculateDistance(List<int> start, List<int> end)
         {
             int distance = 0;
