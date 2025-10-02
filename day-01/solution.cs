@@ -2,7 +2,7 @@ namespace AdventOfCode2024;
 
 using System;
 
-class Day01
+public class Day01
 {
     internal static string Solution(string[] args)
     {
@@ -10,21 +10,40 @@ class Day01
         var startList = Common.GetSortedIntegerListFromFile("../../../day-01/input.txt", 0);
         var endList = Common.GetSortedIntegerListFromFile("../../../day-01/input.txt", 1);
 
-        var distance = CalculateDistance(startList, endList);
+        //var distance = Helpers.CalculateDistance(startList, endList);
+        //return string.Format("Solution for Day 01: Total Distance = {0}", distance);
 
-        return string.Format("Solution for Day 01: Total Distance = {0}", distance);
+        var similarity = Helpers.CalculateSimilarity(startList, endList);
+        return string.Format("Solution for Day 01: Total Similarity = {0}", similarity);
     }
 
-    private static int CalculateDistance(List<int> start, List<int> end)
+    internal class Helpers
     {
-        int distance = 0;
-
-        // TODO: Add error handling for lists of different lengths
-        for (int i = 0; i < start.Count; i++)
+        internal static int CalculateDistance(List<int> start, List<int> end)
         {
-            distance += Math.Abs(start[i] - end[i]);
+            int distance = 0;
+
+            // TODO: Add error handling for lists of different lengths
+            for (int i = 0; i < start.Count; i++)
+            {
+                distance += Math.Abs(start[i] - end[i]);
+            }
+
+            return distance;
         }
 
-        return distance;
+        internal static int CalculateSimilarity(List<int> searchValues, List<int> searchList)
+        {
+            int similarity = 0;
+
+            foreach (var value in searchValues)
+            {
+                int count = System.Linq.Enumerable.Count(searchList, x => x == value);
+
+                similarity += value * count;
+            }
+
+            return similarity;
+        }
     }
 }
