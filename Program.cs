@@ -8,9 +8,9 @@ class Program
     {
         Console.WriteLine("Hello, Advent of Code World!");
 
+        // Day 01 solution
         Console.WriteLine(Day01.Solution(args));
 
-        Console.Write("Press any key to continue...");
-        Console.Read();
+        Console.Write("Solution complete.");
     }
 }
