@@ -7,9 +7,11 @@ public class Day03
 {
     internal static string Solution(string[] args)
     {
-        var lines = Helpers.GetMemoryFile("../../../day-02/input.txt");
-        Helpers.boop();
-        return "";
+        var mem = Helpers.GetMemoryFile("../../../day-03/input.txt");
+        var matches = Helpers.ParseMultiplicationOps(mem);
+        var total = Helpers.GetMultiplicationTotal(matches);
+
+        return string.Format("Solution for Day 03: {0} total of multiplication operations.", total);
     }
 
     private class Helpers
@@ -23,22 +25,35 @@ public class Day03
 
         }
 
-        internal static bool boop()
+        internal static MatchCollection ParseMultiplicationOps(string mem)
         {
-            string text = "This is a test string with mul(1,23) and another mul(456,78) and also mul(9,1) but not mul(1234,5) or mul(1,567).";
             string pattern = @"mul\((\d{1,3}),(\d{1,3})\)";
 
-            MatchCollection matches = Regex.Matches(text, pattern);
+            MatchCollection matches = Regex.Matches(mem, pattern);
 
             Console.WriteLine("Found matches:");
             foreach (Match match in matches)
             {
                 Console.WriteLine($"Full match: {match.Value}");
-                Console.WriteLine($"  First number: {match.Groups[1].Value}");
-                Console.WriteLine($"  Second number: {match.Groups[2].Value}");
-                Console.WriteLine();
             }
-            return true;
+            return matches;
+        }
+
+        internal static int GetMultiplicationTotal(MatchCollection matches)
+        {
+            int total = 0;
+            foreach (Match match in matches)
+            {
+                // Extract the two numbers from the match
+                int num1 = int.Parse(match.Groups[1].Value);
+                int num2 = int.Parse(match.Groups[2].Value);
+
+                // Perform the multiplication
+                int result = num1 * num2;
+                total += result;
+            }
+
+            return total;
         }
     }
 }
