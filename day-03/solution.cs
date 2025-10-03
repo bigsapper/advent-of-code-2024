@@ -44,20 +44,29 @@ public class Day03
         internal static long GetMultiplicationTotal(MatchCollection matches)
         {
             long total = 0;
+            bool yep = true;
 
             foreach (Match match in matches)
             {
-                // This is a "do()" or "don't()" operation, skip it
-                if (match.Value[0] == 'd') continue;
+                // This is a "do()" or "don't()" operation
+                if (match.Value[0] == 'd')
+                {
+                    yep = match.Value == "do()";
+                    // skip to next operation
+                    continue;
+                }
 
-                // Extract the two numbers from the match
-                int num1 = int.Parse(match.Groups[1].Value);
-                int num2 = int.Parse(match.Groups[2].Value);
+                if (yep)
+                {
+                    // Extract the two numbers from the match
+                    int num1 = int.Parse(match.Groups[1].Value);
+                    int num2 = int.Parse(match.Groups[2].Value);
 
-                // Perform the multiplication
-                long result = (long)num1 * num2;
+                    // Perform the multiplication
+                    long result = (long)num1 * num2;
 
-                total += result;
+                    total += result;
+                }
             }
 
             return total;
