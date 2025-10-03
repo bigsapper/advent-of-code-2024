@@ -13,7 +13,9 @@ class Program
         // Day 02 solution
         //Console.WriteLine(Day02.Solution(args));
         // Day 03 solution
-        Console.WriteLine(Day03.Solution(args));
+        //Console.WriteLine(Day03.Solution(args));
+        // Day 04 solution
+        Console.WriteLine(Day04.Solution(args));
 
         Console.Write("Solution complete.");
     }
