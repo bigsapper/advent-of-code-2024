@@ -6,15 +6,12 @@ namespace AdventOfCode2024;
 
 public class Day04
 {
-    // Define directions for searching (8 directions: horizontal, vertical, diagonal)
-    private static readonly int[] dx = [-1, -1, -1, 0, 0, 1, 1, 1];
-    private static readonly int[] dy = [-1, 0, 1, -1, 1, -1, 0, 1];
-
     internal static string Solution(string[] args)
     {
         char[,] matrix = Helpers.GetMemoryFile("../../../day-04/input.txt");
-        var targetWord = "MAS";
-        var result = Helpers.FindXWordInMatrix(matrix, targetWord);
+        //var targetWord = "XMAS";
+        //var result = Helpers.FindWordInMatrix(matrix, targetWord);
+        var result = Helpers.FindXWordInMatrix(matrix);
 
         return string.Format("Solution for Day 04: {0} total.", result);
     }
@@ -43,60 +40,48 @@ public class Day04
             return matrix;
         }
 
-        internal static int FindXWordInMatrix(char[,] matrix, string word)
+        // Ceres Search
+        internal static int FindXWordInMatrix(char[,] matrix)
         {
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
-            int wordLength = word.Length;
             int foundCount = 0;
+            // this routine is specific to the word "MAS"; it expects the letter 'A' to be in the center
+            const string word = "MAS";
 
             Console.WriteLine($"Searching for '{word}' in the matrix:");
 
+            // Iterate through each cell in the grid
             for (int r = 0; r < rows; r++)
             {
                 for (int c = 0; c < cols; c++)
                 {
-                    // Check all 8 directions from the current cell
-                    for (int dir = 0; dir < 8; dir++)
+                    // If the current cell is 'A', it could be the center of an 'X' pattern
+                    if (matrix[r, c] == 'A')
                     {
-                        // we only care about x-cross directions: 0, 2, 5, 7
-                        //if (dir == 1 || dir == 3 || dir == 4 || dir == 6) continue;
+                        // Check for the 'M' and 'S' in the 'X' shape
+                        // This assumes a 3x3 pattern centered on 'A'
+                        // Adjust indices based on the specific 'X' pattern required by the puzzle
 
-                        int currentRow = r;
-                        int currentCol = c;
-                        int k; // Index for the word
+                        // capture diagonals
+                        // Top-left, Bottom-right
+                        string diagonal1 = (r > 0 && c > 0) ? matrix[r - 1, c - 1].ToString() : "";
+                        diagonal1 += matrix[r, c].ToString();
+                        diagonal1 += (r < rows - 1 && c < cols - 1) ? matrix[r + 1, c + 1].ToString() : "";
 
-                        // Check if the first character matches
-                        if (matrix[currentRow, currentCol] != word[0])
+                        // Top-right, Bottom-left
+                        string diagonal2 = (r > 0 && c < cols - 1) ? matrix[r - 1, c + 1].ToString() : "";
+                        diagonal2 += matrix[r, c].ToString();
+                        diagonal2 += (r < rows - 1 && c > 0) ? matrix[r + 1, c - 1].ToString() : "";
+
+                        // check for existence of the word in both diagonals
+                        // Note: This checks both directions (e.g., "MAS" and "SAM")
+                        if (diagonal1.Equals(word) || Reverse(diagonal1).Equals(word))
                         {
-                            continue;
-                        }
-
-                        // Traverse in the current direction
-                        for (k = 1; k < wordLength; k++)
-                        {
-                            currentRow += dx[dir];
-                            currentCol += dy[dir];
-
-                            // Check bounds and character match
-                            if (currentRow < 0 || currentRow >= rows ||
-                                currentCol < 0 || currentCol >= cols ||
-                                matrix[currentRow, currentCol] != word[k])
+                            if (diagonal2.Equals(word) || Reverse(diagonal2).Equals(word))
                             {
-                                break; // Mismatch or out of bounds
-                            }
-                        }
-
-                        // If the entire word is found
-                        if (k == wordLength)
-                        {
-                            // only count if in x-cross direction
-                            if (dir == 0 || dir == 2 || dir == 5 || dir == 7)
-                            {
-                                // TODO: except it needs to be in a cross shape, not just a line
-                                
                                 foundCount++;
-                                Console.WriteLine($"  Found '{word}' starting at ({r}, {c}) in direction {dir}");
+                                Console.WriteLine($"  Found '{diagonal1}' & '{diagonal2}' centered at ({r}, {c})");
                             }
                         }
                     }
@@ -106,9 +91,20 @@ public class Day04
             Console.WriteLine($"Total occurrences of '{word}': {foundCount}\n");
             return foundCount;
         }
+        private static string Reverse(string s)
+        {
+            char[] charArray = s.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
+        }
 
+        // Define directions for searching (8 directions: horizontal, vertical, diagonal)
+        private static readonly int[] dx = { -1, -1, -1, 0, 0, 1, 1, 1 };
+        private static readonly int[] dy = { -1, 0, 1, -1, 1, -1, 0, 1 };
+        // Depth-First Search (DFS) approach
         internal static int FindWordInMatrix(char[,] matrix, string word)
         {
+
             int rows = matrix.GetLength(0);
             int cols = matrix.GetLength(1);
             int wordLength = word.Length;
