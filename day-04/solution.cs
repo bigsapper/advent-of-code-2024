@@ -7,14 +7,14 @@ namespace AdventOfCode2024;
 public class Day04
 {
     // Define directions for searching (8 directions: horizontal, vertical, diagonal)
-    private static readonly int[] dx = { -1, -1, -1, 0, 0, 1, 1, 1 };
-    private static readonly int[] dy = { -1, 0, 1, -1, 1, -1, 0, 1 };
+    private static readonly int[] dx = [-1, -1, -1, 0, 0, 1, 1, 1];
+    private static readonly int[] dy = [-1, 0, 1, -1, 1, -1, 0, 1];
 
     internal static string Solution(string[] args)
     {
         char[,] matrix = Helpers.GetMemoryFile("../../../day-04/input.txt");
-        var targetWord = "XMAS";
-        var result = Helpers.FindWordInMatrix(matrix, targetWord);
+        var targetWord = "MAS";
+        var result = Helpers.FindXWordInMatrix(matrix, targetWord);
 
         return string.Format("Solution for Day 04: {0} total.", result);
     }
@@ -41,6 +41,70 @@ public class Day04
             }
 
             return matrix;
+        }
+
+        internal static int FindXWordInMatrix(char[,] matrix, string word)
+        {
+            int rows = matrix.GetLength(0);
+            int cols = matrix.GetLength(1);
+            int wordLength = word.Length;
+            int foundCount = 0;
+
+            Console.WriteLine($"Searching for '{word}' in the matrix:");
+
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    // Check all 8 directions from the current cell
+                    for (int dir = 0; dir < 8; dir++)
+                    {
+                        // we only care about x-cross directions: 0, 2, 5, 7
+                        //if (dir == 1 || dir == 3 || dir == 4 || dir == 6) continue;
+
+                        int currentRow = r;
+                        int currentCol = c;
+                        int k; // Index for the word
+
+                        // Check if the first character matches
+                        if (matrix[currentRow, currentCol] != word[0])
+                        {
+                            continue;
+                        }
+
+                        // Traverse in the current direction
+                        for (k = 1; k < wordLength; k++)
+                        {
+                            currentRow += dx[dir];
+                            currentCol += dy[dir];
+
+                            // Check bounds and character match
+                            if (currentRow < 0 || currentRow >= rows ||
+                                currentCol < 0 || currentCol >= cols ||
+                                matrix[currentRow, currentCol] != word[k])
+                            {
+                                break; // Mismatch or out of bounds
+                            }
+                        }
+
+                        // If the entire word is found
+                        if (k == wordLength)
+                        {
+                            // only count if in x-cross direction
+                            if (dir == 0 || dir == 2 || dir == 5 || dir == 7)
+                            {
+                                // TODO: except it needs to be in a cross shape, not just a line
+                                
+                                foundCount++;
+                                Console.WriteLine($"  Found '{word}' starting at ({r}, {c}) in direction {dir}");
+                            }
+                        }
+                    }
+                }
+            }
+
+            Console.WriteLine($"Total occurrences of '{word}': {foundCount}\n");
+            return foundCount;
         }
 
         internal static int FindWordInMatrix(char[,] matrix, string word)
